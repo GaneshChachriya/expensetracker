@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta amount="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+</head>
+<body>
+    <form onsubmit="saveToLocalStorage(event)">
+        <fieldset>
+        <h1 style="text-align: center;"center-align">Expense Tracker</h1>
+        <label>Choose ExpenseAmount :</label>
+        <input id="Amount" type="text" name="Amount" required /><br>
+        <label>Description :</label>
+        <input id="description" type="text" name="descriptionID" required/><br>
+        <label>Categogy :</label>
+        <input id="category" type="text" name="category"/><br>
+        <button>submit</button>
+        </fieldset>
+        </form>
+        <form>
+         <ui id="ExpenseTracker"></ui>
+         <script>
+    //  <!-- <script type="text/javascript">
+        //  let myobj ={
+        //      Amount : 'ganeshchachriya',
+        //      descriptionID : 'g.chachriya11@gmail.com',
+        //      category : '1234567890'
+        //  };
+        //  let myobj_serialized = JSON.stringify(myobj);
+        //  localStorage.setItem('myobj', myobj_serialized);
+        //  let myobj_deserialized = JSON.parse(localStorage.getItem('myobj'));
+        //  console.log(myobj_deserialized); -->
+    
+         function saveToLocalStorage(event){
+             event.preventDefault();
+             const amount = event.target.Amount.value;
+             const description = event.target.descriptionID.value;
+             const category = event.target.category.value;
+            //  localStorage.setItem('amount', amount);
+            //  localStorage.setItem('description', description);
+            //  localStorage.setItem('category', category);
+            const obj ={
+                amount, description, category
+            }
+            localStorage.setItem(obj.description, JSON.stringify(obj));
+            showNewUserOnScreen(obj)
+       }
+       window.addEventListener("DOMContentLoaded", () => {
+           const localStorageObj = localStorage;
+           const localStoragekeys = Object.keys(localStorageObj)
+           for(var i=0; i<localStoragekeys.length; i++){
+               const key = localStoragekeys[i]
+               const userDetailsString = localStorageObj[key];
+               const userDetailsObj = JSON.parse(userDetailsString);
+               showNewUserOnScreen(userDetailsObj)
+           }
+       })
+       function showNewUserOnScreen(user){
+           document.getElementById('description').value = '';
+           document.getElementById('Amount').value = '';
+           document.getElementById('category').value = '';
+           if(localStorage.getItem(user.description) !== null){
+               removeUserFromScreen(user.description)
+           }
+           const parentNode = document.getElementById('ExpenseTracker');
+           const childHTML = `<li id=${user.description}> ${user.amount} - ${user.description} <button onclick=deleteUser('${user.description}')> Delete User </button>
+           <button onclick=editUserDetails('${user.description}','${user.amount}','${user.category}')>Edit User </button></li>`
+           parentNode.innerHTML = parentNode.innerHTML + childHTML;
+       }
+    //    edit user
+       function editUserDetails(descriptionID, amount, category){
+           document.getElementById('description').value = descriptionID;
+           document.getElementById('Amount').value = amount;
+           document.getElementById('category').value = category;
+           deleteUser(descriptionID);
+       }
+    //    delete user
+       function deleteUser(descriptionID){
+           console.log(descriptionID)
+           localStorage.removeItem(descriptionID);
+           removeUserFromScreen(descriptionID);
+       }
+       
+       function removeUserFromScreen(descriptionId){
+                    const parentNode = document.getElementById('ExpenseTracker');
+                    const childNodeToBeDeleted = document.getElementById(descriptionId);
+                    if(childNodeToBeDeleted) {
+                        parentNode.removeChild(childNodeToBeDeleted)
+                    }
+                }
+           </script>
+        </form>
+    </body>
+    </html>
